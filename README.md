@@ -3,640 +3,593 @@ Cohort 9 — MERN (NodeJS+ReactJS) assignment for Hiba Saud Anwari
 
 # Leaflet Notes App
 
-A full-stack notes management application built with the **MERN stack**, providing secure authentication, note creation and management, rich-text editing, search, sorting, pinning, trash management, import/export functionality, and password-strength validation.
+A full-stack notes management application built with **React.js** and **Node.js**, providing secure authentication, personal note management, rich-text editing, search and sorting, trash and recovery functionality, import/export capabilities, application logging, centralized error handling, automated testing, and SonarQube-based code-quality analysis.
 
-The project is divided into a React-based frontend and a Node.js/Express backend, with Prisma ORM and MySQL used for database management.
+The application is designed with a focus on **security, maintainability, accessibility, reliability, and a clean user experience**.
 
-##  Project Overview
+Users can:
 
-**Leaflet Notes App** is a full-stack web application designed to help users create, organize, search, edit, and manage their personal notes.
-
-The application provides an authenticated environment where users can:
-
-* Create notes
-* Edit existing notes
-* Delete notes
-* Pin important notes
+* Create and edit notes
+* Format notes using a rich-text editor
+* Pin and unpin important notes
+* Search and sort notes
 * Move notes to trash
 * Restore deleted notes
 * Permanently delete notes
-* Search notes
-* Sort notes
-* Import notes from JSON and TXT files
+* Import notes
 * Export notes
-* Edit notes using a rich-text editor
-* Register and log in securely
-* Reset passwords
+* Manage their profile
+* Reset their password
 * Check password strength during registration
+* Receive feedback through toast notifications
+* Use the application across different screen sizes
 
-The project also includes automated testing, logging, code-quality analysis, and accessibility considerations.
+The application also includes backend logging, centralized exception handling, authentication middleware, automated testing, and SonarQube code-quality analysis.
 
-#  Features
 
-##  Authentication
+# Key Features
 
-The application provides user authentication functionality including:
+## 1. User Authentication & Authorization
+
+The application provides a complete authentication flow for users.
 
 * User registration
 * User login
 * User logout
-* Password validation
-* Password-strength checking
+* Protected routes
+* Cookie-based authentication
+* Authentication middleware
 * Forgot-password functionality
 * Password reset functionality
-* Authentication-protected application routes
-* Cookie-based authentication
-* Form validation and error handling
+* Form validation
+* Authentication error handling
+* Session/current-user handling
+* User-specific notes
 
-### Password Strength
+Each authenticated user notes are associated with their account, ensuring that users can only access and manage their own notes.
 
-The signup form uses the **zxcvbn** library to evaluate password strength.
+## 2. Password Strength Validation
 
-Password strength is checked asynchronously and the UI provides feedback to the user while creating an account.
+The signup process includes password-strength analysis using the **zxcvbn** password-strength library.
 
-## 📝 Notes Management
+* Password strength evaluation
+* Real-time password feedback
+* Minimum and maximum password length validation
+* Confirmation-password validation
+* Strong-password requirements
+* Password visibility toggle
+* Asynchronous password-strength checking
+* User-friendly validation messages
 
-Users can manage their notes through the dashboard.
+This provides users with immediate feedback when creating a password and encourages stronger credentials.
 
-### Create Notes
+## 3. Note Management
 
-Users can create new notes with:
-
-* Title
-* Rich-text content
-
-### Edit Notes
-
-Existing notes can be opened and edited.
-
-The application tracks note changes and provides save-state feedback.
-
-### Delete Notes
-
-Notes can be moved to the trash instead of being immediately permanently deleted.
-
-### Restore Notes
-
-Notes in the trash can be restored.
-
-### Delete Forever
-
-Users can permanently remove notes from the trash.
-
-## 📌 Pin Notes
-
-Important notes can be pinned.
-
-Pinned notes are displayed according to the application's sorting and organization rules.
-
-The application uses `isPinned` to represent the pinned state of a note.
-
-
-## 🔎 Search
-
-Users can search through their notes.
-
-The application provides note previews while searching so users can quickly identify the note they are looking for.
-
-##  Sorting
-
-Notes can be sorted using different options:
-
-* Date
-* Title
-* Pinned
-
-Sorting also supports:
-
-* Ascending order
-* Descending order
-
-The sorting logic also takes pinned notes into consideration when appropriate.
-
-##  Trash Management
-
-The application provides a dedicated trash workflow.
+The core functionality of the application is complete note management.
 
 Users can:
+* Create new notes
+* View notes
+* Edit existing notes
+* Save changes
+* Delete notes
+* Restore deleted notes
+* Permanently delete notes
+* Pin and unpin notes
 
-1. Move a note to trash
-2. View deleted notes
-3. Restore a note
-4. Permanently delete a note
+Notes support rich content editing, allowing users to create more structured and readable notes.
 
-This prevents accidental permanent deletion of notes.
+## 4. Rich Text Editing
 
-##  Import Notes
+The application uses a rich-text editor to provide a better note-writing experience. Users can create formatted content rather than being limited to plain text.
 
-The application supports importing notes from:
+This allows notes to contain structured and formatted information while providing a more user-friendly editing experience.
 
-* `.json`
-* `.txt`
+## 5. Pin & Unpin Notes
 
-Multiple files can be imported at once.
+Users can :
+* Pin notes
+* Unpin notes
+* Display pinned notes prominently
+* Sort notes by pinned status
+* Maintain pinned state while using other sorting options
 
-### JSON Import
+The sorting logic also ensures that pinned notes are handled correctly when other sorting methods are selected.
 
-JSON files are validated before being imported.
+## 6. Trash & Note Recovery
 
-The expected note structure includes properties such as:
+Deleted notes are moved to a trash area instead of being immediately removed permanently.
+Users can :
+* Move notes to trash
+* View trashed notes
+* Restore notes
+* Permanently delete notes
 
-```json
-[
-  {
-    "title": "My Note",
-    "content": "This is my note."
-  }
-]
-```
+This provides users with a recovery mechanism and prevents accidental deletion from immediately becoming permanent.
 
-Invalid JSON note structures are rejected with an appropriate error message.
+## 7. Search & Note Preview
 
-### TXT Import
+The application provides note searching functionality.
+Users can search through their notes and quickly identify relevant content.
+Users can :
+* Search notes
+* Display matching notes
+* Show note previews
+* Handle empty search results
+* Maintain a clean search experience
 
-TXT files are converted into notes automatically.
+## 8. Sorting & Filtering
 
-The filename is used as the note title and the file contents become the note content.
+Notes can be organized using different sorting options.
 
+* Sort by date
+* Sort by title
+* Sort by pinned status
+* Ascending order
+* Descending order
+* Pin-first behavior where appropriate
+* Fallback between `editedAt` and `createdAt`
 
-## Export Notes
+The sorting logic was implemented carefully to ensure that changing the sorting method does not produce unexpected ordering.
 
-Users can export notes from the application.
+## 9. Import Notes
 
-The export functionality supports exporting individual notes as well as multiple notes where applicable.
+The application supports importing notes from external files.
 
+* TXT
+* Multiple TXT files
 
-##  Rich Text Editing
+The import functionality includes validation and error handling for invalid or unsupported files.
 
-Notes support rich-text editing using a rich-text editor.
+### Import handling includes
 
-This allows users to format their note content rather than being restricted to plain text.
+* JSON validation
+* Unsupported-file handling
+* Empty-file handling
+* Multiple-file imports
+* Import failure handling
+* User feedback for import errors
 
+## 10. Export Notes
 
-## 🎨 User Interface
+Users can export their notes for external use or backup purposes.
+The application supports exporting individual or multiple notes where applicable.
+Export functionality also includes appropriate handling of export states and errors.
 
-The frontend uses:
+## 11. User Profile Management
 
-* React
-* Tailwind CSS
+Users can manage their profile information through the application.
+
+### Profile functionality includes
+
+* View profile information
+* Update username
+* Update email
+* Update profile information
+* Update profile-related data
+* Handle profile update errors
+
+# Backend
+
+The backend is built using **Node.js** and **Express.js**.
+
+It provides APIs for authentication, user management, notes, and other application functionality.
+
+### Backend responsibilities include
+
+* Authentication
+* Authorization
+* User management
+* Note CRUD operations
+* Profile management
+* Database communication
+* Request handling
+* Validation
+* Error handling
+* Logging
+
+# Database
+
+The application uses **MySQL** as its relational database.
+Database operations are handled using **Prisma ORM**.
+
+### Database responsibilities
+
+The database stores information such as:
+
+* Users
+* Notes
+* Authentication-related information
+* Note timestamps
+* Note status
+* Pinned state
+* Other related application data
+
+Prisma provides a structured and type-safe approach to communicating with the database.
+
+# Prisma ORM
+
+The backend uses **Prisma** for database access and schema management.
+
+### Prisma is used for
+
+* Database schema definition
+* Database queries
+* CRUD operations
+* Migrations
+* Relational data management
+* Communication between the Express backend and MySQL
+
+# Application Logging
+
+The application uses **Pino Logger** for structured application logging.
+Logging is implemented throughout the backend to make application behavior easier to monitor and debug.
+
+### Logged information includes
+
+* HTTP requests
+* HTTP responses
+* Important application events
+* Errors
+* Exceptions
+* Backend operations
+* Relevant user activities
+
+Structured logging makes it easier to diagnose issues and understand application behavior.
+
+# Exception & Error Handling
+
+The backend implements centralized exception handling through Express middleware.
+Instead of handling every error independently, errors are passed through centralized error-handling logic.
+
+### Error handling includes
+
+* Global exception handling
+* Centralized error middleware
+* Meaningful API error responses
+* HTTP status handling
+* Validation errors
+* Authentication errors
+* Database/API errors
+* Unexpected server errors
+* Pino logging for exceptions
+
+This improves reliability and ensures that errors are handled consistently throughout the application.
+
+# Authentication Middleware
+
+Protected backend routes use authentication middleware to verify the user's authenticated session.
+
+The middleware is responsible for:
+
+* Reading authentication information
+* Verifying authentication
+* Protecting private routes
+* Preventing unauthorized access
+* Making authenticated user information available to protected operations
+
+# API Communication
+
+The frontend communicates with the backend through a reusable API utility.
+A centralized `apiFetch` utility is used to handle API requests consistently.
+This provides a cleaner communication layer between the React frontend and Express backend.
+
+# Frontend
+
+The frontend is built using **React.js** with **Vite**.
+It provides an interactive and responsive user interface for authentication, note management, profile management, search, sorting, importing, exporting, and other application functionality.
+
+### Frontend includes
+* Reusable React components
+* React Context
+* React Router
+* Form handling
+* Validation
+* API communication
+* Toast notifications
+* Loading states
+* Error states
+* Responsive layouts
+* Accessibility improvements
+* Rich-text editing
+
+# UI & User Experience
+
+The application uses **Tailwind CSS** to create a clean and responsive interface.
+UI features include : 
 * Responsive layouts
 * Reusable components
+* Interactive buttons
 * Toast notifications
-* Icons
+* Loading indicators
+* Empty states
+* Error states
+* Password visibility controls
+* Search interface
+* Sorting controls
+* Import/export controls
+* Modal interactions
 * Accessible form controls
+* Consistent icons and visual feedback
 
-The application also provides visual feedback for:
+# Accessibility
 
-* Validation errors
-* Successful registration
-* Saving states
-* Loading states
-* Import errors
-* API errors
+Accessibility considerations were included throughout the frontend.
+Examples include:
+* Proper form labels
+* Accessible buttons
+* `aria-label`
+* `aria-invalid`
+* `aria-describedby`
+* Semantic HTML
+* Accessible error messages
+* Keyboard-friendly controls
+* Clear validation feedback
+Accessibility-related code-quality issues identified during analysis were also reviewed and improved.
 
+# Notifications & User Feedback
 
-# 🛠️ Technology Stack
+The application provides feedback to users through toast notifications and UI states.
+Feedback is provided for actions such as:
+* Successful account creation
+* Successful note operations
+* Errors
+* Import failures
+* Export states
+* Validation problems
+* Other important application events
+This makes application behavior clear to the user instead of silently performing operations.
+
+# Testing
+Automated testing was implemented for both frontend and backend functionality.
+
+## Frontend Testing
+The frontend uses **Jest** together with **React Testing Library**.
+Tests cover important components, contexts, and user interactions.
+Testing includes areas such as:
+* Login
+* Signup
+* Forgot password
+* Reset password
+* Note management
+* Notes context
+* Note cards
+* Note action controls
+* Profile Context
+* Import functionality
+* Export functionality
+* Form validation
+* Error handling
+* Theme Context
+
+The tests verify both expected behavior and important edge cases.
+
+## Backend Testing
+
+Backend functionality is covered through automated unit testing.
+Tests target important backend logic such as:
+* Controllers
+* Services
+* Authentication
+* Note operations
+* Validation
+* Error handling
+* Data access behavior
+The project follows the assignment's backend testing requirements and uses the appropriate testing tools configured for the backend.
+
+# SonarQube & Code Quality
+**SonarQube** was integrated into the project to analyze source-code quality and identify potential issues.
+The analysis was used to identify and improve areas such as:
+* Bugs
+* Code smells
+* Reliability
+* Maintainability
+* Cognitive complexity
+* Duplicated or unnecessary logic
+* Accessibility issues
+* Code structure
+* Error handling
+* General code quality
+After running SonarQube analysis, the identified issues were reviewed and the relevant code was refactored or improved.
+
+A `sonar-project.properties` configuration file is included in the project to support SonarQube analysis.
+
+# Code Quality Improvements
+
+Several improvements were made as part of the quality-improvement phase.
+These include:
+* Refactoring complex functions
+* Reducing cognitive complexity
+* Improving component structure
+* Extracting reusable logic
+* Improving error handling
+* Improving accessibility
+* Cleaning up unnecessary code
+* Improving state management
+* Improving sorting behavior
+* Handling edge cases
+* Improving test coverage
+* Fixing issues identified during static analysis
+
+The goal was not only to make the application functional but also to make the code easier to maintain and extend.
+
+# Technology Stack
 
 ## Frontend
-
 * **React.js**
 * **Vite**
 * **JavaScript**
 * **Tailwind CSS**
 * **React Router**
+* **React Context API**
 * **ReactQuill**
-* **Jest**
 * **React Testing Library**
 * **zxcvbn**
 * **canvas-confetti**
 
 ## Backend
-
 * **Node.js**
 * **Express.js**
 * **Prisma ORM**
 * **MySQL**
 * **Pino Logger**
+* **Authentication Middleware**
+* **Centralized Error Handling**
 
-## Testing & Code Quality
-
+## Testing & Quality
 * **Jest**
 * **React Testing Library**
+* **Mocha/Chai where configured for backend testing**
 * **SonarQube**
-* **SonarQube Scanner**
+* **SonarScanner**
 
-## Development Tools
+## Development & Version Control
+* **Git**
+* **GitHub**
+* **VS Code**
+* **npm**
 
-* Git
-* GitHub
-* VS Code
-* Prisma
-* npm
+## Project Architecture
 
-# Application State Management
+The application follows a separation between frontend, backend, and database responsibilities.
 
-The application uses React Context to manage shared application state.
+```mermaid
+flowchart TD
+    A["React Frontend<br/><br/>Components<br/>Pages<br/>Contexts<br/>Routing<br/>Forms"]
+    
+    B["Node / Express<br/><br/>Routes<br/>Controllers<br/>Middleware<br/>Authentication<br/>Error Handling<br/>Pino Logging"]
+    
+    C["MySQL<br/><br/>Users<br/>Notes<br/>Related Data"]
 
-### NotesContext
-
-The `NotesContext` manages note-related operations such as:
-
-* Creating notes
-* Updating notes
-* Getting notes
-* Restoring notes
-* Moving notes to trash
-* Permanently deleting notes
-* Pinning/unpinning notes
-
-### SidebarContext
-
-Manages sidebar-related UI state.
-
-### ModalContext
-
-Manages modal-related UI state.
-
-#  Authentication Flow
-
-The authentication flow is handled between the frontend and backend.
-
-A simplified flow is:
-
-```text
-User
- │
- ▼
-Frontend Authentication Form
- │
- ▼
-API Request
- │
- ▼
-Express Backend
- │
- ▼
-Authentication Controller
- │
- ▼
-Database
- │
- ▼
-Authentication Response
- │
- ▼
-Frontend
+    A -->|API Requests| B
+    B -->|Prisma ORM| C
 ```
 
-Authentication tokens are handled using cookies.
+### Authentication Flow
 
-The backend authentication middleware reads the authentication cookie to verify authenticated requests.
+The application uses an authentication flow to securely manage user access to personal notes.
 
-# Database
-
-The application uses:
-
-**MySQL**
-
-with:
-
-**Prisma ORM**
-
-The database contains the application's persistent data, including user and note information.
-
-The Prisma schema is located at:
-
-```text
-backend/prisma/schema.prisma
+```mermaid
+flowchart TD
+    A["User"] --> B["Signup / Login"]
+    B --> C["Authentication API"]
+    C --> D["Backend Validation"]
+    D --> E["Authentication Cookie"]
+    E --> F["Protected Routes"]
+    F --> G["Authenticated User"]
+    G --> H["Personal Notes"]
 ```
 
-# API Communication
 
-Frontend API requests are centralized through the application's API utility.
+## Note Lifecycle
 
-Example:
+The note lifecycle allows users to create, edit, save, pin, move to trash, restore, or permanently delete notes.
 
-```javascript
-apiFetch("/api/auth/signup", {
-  method: "POST",
-  body: JSON.stringify({
-    username,
-    email,
-    password,
-  }),
-});
+```mermaid
+flowchart TD
+    A["Create Note"] --> B["Active"]
+
+    B --> C["Edit"]
+    B --> D["Pin / Unpin"]
+
+    C --> E["Save"]
+    E --> B
+
+    B --> F["Move to Trash"]
+
+    F --> G["Restore"]
+    F --> H["Delete Forever"]
+
+    G --> B
 ```
 
-This provides a consistent way for the frontend to communicate with the backend.
+## Import Workflow
 
----
+The import workflow validates the selected files and their contents before creating and adding notes to the application state.
 
-# Error Handling
+```mermaid
+flowchart TD
+    A["Select File"] --> B["Validate File"]
 
-The application handles errors at multiple levels.
+    B --> C["Valid"]
+    B --> D["Invalid"]
 
-### Frontend
+    C --> E["Parse File"]
+    D --> F["Show Error"]
 
-Frontend validation handles errors such as:
-
-* Empty fields
-* Invalid email addresses
-* Short passwords
-* Long passwords
-* Weak passwords
-* Password mismatch
-* Invalid imported files
-* Unsupported file types
-* Failed API requests
-
-### Backend
-
-The backend includes error-handling middleware and structured logging.
-
-
-# Form Validation
-
-The signup form validates:
-
-### Username
-
-The username cannot be empty.
-
-### Email
-
-The email is checked for a valid structure.
-
-### Password
-
-The password must:
-
-* Not be empty
-* Contain at least 8 characters
-* Contain no more than 64 characters
-* Meet the required password-strength score
-
-### Confirm Password
-
-The confirmation password must match the original password.
-
-#  Password Security
-
-Password strength is evaluated using:
-
-**zxcvbn**
-
-The application does not simply check password length. It also evaluates password strength and rejects passwords that are considered too weak.
-
-
-# Logging
-
-The backend uses **Pino** for application logging.
-
-Logging is used to help monitor backend operations and diagnose errors.
-
-Errors are logged with useful context while user-facing messages remain appropriate for the frontend.
-
-
-# Testing
-
-The project includes automated tests using:
-
-* Jest
-* React Testing Library
-
-Tests cover important application behavior including:
-
-* Authentication forms
-* Signup validation
-* Forgot-password behavior
-* Notes context
-* Note sorting
-* Note actions
-* Import functionality
-* File validation
-* Error handling
-* UI interactions
-
-Example test command:
-
-```bash
-npm test
+    E --> G["Validate Content"]
+    G --> H["Create Notes"]
+    H --> I["Update Notes State"]
 ```
 
-#  NoteActionBar Testing
+# Git & Version Control
 
-The note action bar tests cover:
+Git is used throughout development to manage source code and feature development.
+The project uses feature-based branching to keep different areas of development organized.
 
-* Rendering Sort and Import controls
-* Rendering icons
-* Opening the sort menu
-* Closing the sort menu
-* Selecting Date sorting
-* Selecting Title sorting
-* Selecting Pinned sorting
-* Selecting ascending order
-* Selecting descending order
-* Active sorting indicators
-* Hidden file input
-* JSON imports
-* TXT imports
-* Multiple TXT imports
-* Invalid JSON rejection
-* Unsupported file rejection
-* Import failures
-* Empty file selection
+Git was also used for:
+* Feature development
+* Bug fixes
+* Refactoring
+* Testing work
+* Code-quality improvements
+* Merging changes
+* Rebase and branch management
+* Pull requests
+* Code review
 
-# SonarQube
+# Engineering Practices
 
-SonarQube is used for static code analysis and code-quality monitoring.
-
-The project is configured using:
-
-```text
-sonar-project.properties
-```
-
-SonarQube is used to identify:
-
-* Bugs
-* Code smells
-* Maintainability issues
-* Reliability issues
-* Cognitive complexity
-* Other code-quality problems
-
-The project can be analyzed using SonarScanner.
-
-Example:
-
-```powershell
-sonar-scanner.bat
-```
-
-The analysis results can then be viewed in the SonarQube project dashboard.
-
-
-#  Code Quality
-
-During development, SonarQube analysis was used to identify and improve issues such as:
-
-* Cognitive complexity
-* Maintainability problems
-* Code smells
-* Reliability issues
-* Accessibility-related concerns
-
-Functions were refactored where necessary to keep the code maintainable and easier to understand.
-
-
-#  Clone the Repository
-
-```bash
-git clone <repository-url>
-```
-
-Navigate into the project:
-
-```bash
-cd cohort-9-mern-16178-hiba
-```
-
-# 📱 Main Application Flow
-
-A typical user journey is:
-
-```text
-Open Application
-      ↓
-Create Account / Login
-      ↓
-Dashboard
-      ↓
-Create Note
-      ↓
-Edit Note
-      ↓
-Save Note
-      ↓
-Search / Sort / Pin
-      ↓
-Move to Trash
-      ↓
-Restore or Delete Forever
-```
-
----
-
-# Note Lifecycle
-
-A note can follow this lifecycle:
-
-```text
-Create
-  ↓
-Active Note
-  ↓
-Edit
-  ↓
-Pin / Unpin
-  ↓
-Move to Trash
-  ↓
-Restore
-  ↓
-Active Note
-```
-
-Or:
-
-```text
-Active Note
-    ↓
-Move to Trash
-    ↓
-Delete Forever
-    ↓
-Permanently Removed
-```
-
----
-
-# Import Workflow
-
-```text
-Select Import
-      ↓
-Choose JSON/TXT Files
-      ↓
-Validate File
-      ↓
-Read File Content
-      ↓
-Convert Into Note Data
-      ↓
-Import Notes
-      ↓
-Display Notes
-```
-
-Unsupported files and invalid note structures are rejected with appropriate error messages.
-
-
-#  Quality Assurance
-
-The project uses multiple layers of quality assurance:
-
-### Automated Testing
-
-Jest and React Testing Library are used to verify application behavior.
-
-### Static Analysis
-
-SonarQube is used to identify code-quality issues.
-
-### Manual Testing
-
-Important user flows are also manually verified through the application UI.
-
-
-#  Accessibility
-
-Accessibility considerations have been included throughout the application.
-
-Examples include:
-
-* Labels associated with form fields
-* `aria-invalid` attributes
-* `aria-describedby` for validation messages
-* Accessible button names
-* Keyboard-friendly controls
-* Semantic HTML elements
-
-# 👩 Development
-
-This project was developed as a full-stack web application with a focus on:
-
-* Clean component structure
-* Reusable React components
-* Secure authentication
-* Database-driven note management
-* Error handling
+The project follows several software-development practices, including:
+* Component-based React architecture
+* Separation of frontend and backend responsibilities
+* Reusable components and utilities
+* Centralized state management
+* API abstraction
+* Middleware-based backend architecture
+* Centralized exception handling
+* Structured logging
 * Automated testing
-* Code quality
-* Maintainability
-* Accessibility
+* Static code analysis
+* Accessibility considerations
+* Input validation
+* Error handling
+* Edge-case handling
+* Maintainable code structure
+* Git-based version control
 
----
+# Additional Implementations
 
-#  Summary
+In addition to the core assignment requirements, the application includes several additional features and improvements:
 
-**Leaflet Notes App** is a complete full-stack notes management system that combines a modern React frontend with a Node.js/Express backend and MySQL database.
+* Password-strength analysis using `zxcvbn`
+* Password visibility controls
+* Rich-text note editing
+* Pin/unpin functionality
+* Trash and note recovery
+* Permanent deletion
+* Search with note previews
+* Multiple sorting options
+* Ascending and descending sorting
+* TXT import
+* Multiple TXT file import
+* Note export functionality
+* Toast notifications
+* Loading and submission states
+* Responsive UI
+* React Context-based state management
+* Reusable UI components
+* Accessibility improvements
+* Form validation
+* Centralized API communication
+* Structured backend logging
+* Centralized exception handling
+* SonarQube-based code-quality improvements
+* Automated frontend and backend testing
+* Handling of invalid files and edge cases
 
-The application provides a complete note-management workflow along with authentication, password-strength validation, rich-text editing, search, sorting, pinning, trash management, import/export functionality, automated testing, logging, and SonarQube-based code-quality analysis.
+# Project Status
+**Status: Completed**
 
-
-##  Project Status
-
-**Status:** Completed / Under active development
-
-The project includes the core authentication, notes management, dashboard, state management, testing, error handling, and code-quality workflows required for a full-stack notes application.
+The application includes the required full-stack technologies and core functionality, along with additional features for usability, reliability, testing, accessibility, and code quality.
+The project has also undergone automated testing and SonarQube analysis, with identified code-quality issues reviewed and addressed through refactoring and improvements.
