@@ -1,6 +1,7 @@
 require("dotenv").config();
 const { Resend } = require("resend");
 const logger = require("../utilities/logger");
+
 if (!process.env.RESEND_API_KEY) {
   throw new Error("RESEND API KEY is not set");
 }
@@ -78,4 +79,5 @@ try {
 }
 module.exports = {
   sendPasswordResetEmail,
+  resend
 };

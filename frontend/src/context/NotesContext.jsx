@@ -3,6 +3,47 @@ import { apiFetch } from "../config/api";
 import JSZip from "jszip";
 const NotesContext = createContext();
 
+// export note on each note -as .txt file
+function exportNote(note) {
+  try {
+    const title = note.title || "Untitled";
+    const content = note.content || "";
+
+    // from the editor convert everythgni into plain text when exporting 
+    const plainTextContent = content
+      .replace(/<br\s*\/?>/gi, "\n")
+      .replace(/<\/p>/gi, "\n")
+      .replace(/<p[^>]*>/gi, "")
+      .replace(/<[^>]*>/g, "")
+      .replace(/&nbsp;/gi, " ")
+      .replace(/&amp;/gi, "&")
+      .replace(/&lt;/gi, "<")
+      .replace(/&gt;/gi, ">")
+      .trim();
+
+    const fileContent = `${title}\n\n${plainTextContent}`;
+
+    const file = new Blob([fileContent], {
+      type: "text/plain",
+    });
+//temp url - to download file then
+    const fileUrl = URL.createObjectURL(file);
+
+    const link = document.createElement("a");
+    link.href = fileUrl;
+    link.download = `${title}.txt`;
+
+    document.body.appendChild(link);
+    link.click();
+   link.remove();
+
+    //revoke url after we have downloaded the file
+    URL.revokeObjectURL(fileUrl);
+  } catch (error) {
+    console.error("Failed to export note:", error);
+  }
+}
+
 export function NotesProvider({ children }) {
     const [notes, setNotes] = useState([]);
   const [notesError, setNotesError] = useState(null);
@@ -10,12 +51,14 @@ export function NotesProvider({ children }) {
   const [exportStatus, setExportStatus] = useState("idle");
 const [exportProgress, setExportProgress] = useState(0);
 const exportStatusTimer = useRef(null);
+const notesRequestVersion = useRef(0);
 // to get all notes after authentication
 useEffect(() => {
   getAllNotes().catch((error) => {
     console.error("Failed to fetch notes:", error);
   });
 }, []);
+
 
 useEffect(() => {
 //prevents after cleanup then
@@ -27,20 +70,7 @@ useEffect(() => {
 }, []);
 
   async function createNote(title, noteContent) {
-    const response = await apiFetch("/api/notes", {
-      method: "POST",
-      body: JSON.stringify({
-        title,
-        noteContent,
-      }),
-    });
-    const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.message || "Failed to create note");
-    }
-    setNotes((prev) => [...prev, data.note]);
-
-  async function createNote(title, noteContent) {
+      notesRequestVersion.current += 1;
     try{
     const response = await apiFetch("/api/notes", {
       method: "POST",
@@ -98,6 +128,7 @@ async function updateNote(id, title, noteContent, updatedAt) {
 }
 
 async function getAllNotes() {
+   const requestVersion = notesRequestVersion.current;
   try {
     const response = await apiFetch("/api/notes");
 
@@ -107,6 +138,9 @@ async function getAllNotes() {
       throw new Error(data.message || "Error! Failed to fetch notes");
     }
 
+    if (requestVersion !== notesRequestVersion.current) {
+      return;
+    }
     setNotes(data.allNotes);
     setNotesError(null);
   } catch (error) {
@@ -230,46 +264,7 @@ async function getNoteById(id) {
   }
 }
 
-// export note on each note -as .txt file
-function exportNote(note) {
-  try {
-    const title = note.title || "Untitled";
-    const content = note.content || "";
 
-    // from the editor convert everythgni into plain text when exporting 
-    const plainTextContent = content
-      .replace(/<br\s*\/?>/gi, "\n")
-      .replace(/<\/p>/gi, "\n")
-      .replace(/<p[^>]*>/gi, "")
-      .replace(/<[^>]+>/g, "")
-      .replace(/&nbsp;/gi, " ")
-      .replace(/&amp;/gi, "&")
-      .replace(/&lt;/gi, "<")
-      .replace(/&gt;/gi, ">")
-      .trim();
-
-    const fileContent = `${title}\n\n${plainTextContent}`;
-
-    const file = new Blob([fileContent], {
-      type: "text/plain",
-    });
-//temp url - to download file then
-    const fileUrl = URL.createObjectURL(file);
-
-    const link = document.createElement("a");
-    link.href = fileUrl;
-    link.download = `${title}.txt`;
-
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    //revoke url after we have downloaded the file
-    URL.revokeObjectURL(fileUrl);
-  } catch (error) {
-    console.error("Failed to export note:", error);
-  }
-}
 // export all of the notes as zip file and in that files all notes as .txt
 async function exportAllNotes() {
   const activeNotes = notes.filter((note) => !note.isDeleted);
@@ -296,7 +291,7 @@ const usedNames = new Set();
         .replace(/<br\s*\/?>/gi, "\n")
         .replace(/<\/p>/gi, "\n")
         .replace(/<p[^>]*>/gi, "")
-        .replace(/<[^>]+>/g, "")
+        .replace(/<[^>]*>/g, "")
         .replace(/&nbsp;/gi, " ")
         .replace(/&amp;/gi, "&")
         .replace(/&lt;/gi, "<")
@@ -334,7 +329,7 @@ zip.file(fileName,`${title}\n\n${plainTextContent}` );
 
     document.body.appendChild(link);
     link.click();
-    document.body.removeChild(link);
+   link.remove();
 
     URL.revokeObjectURL(zipUrl);
 
@@ -369,14 +364,19 @@ exportStatusTimer.current = setTimeout(() => {
         getAllNotes,
         updateNote,
         notesError,
-        getNoteById
+        getNoteById,
+        exportAllNotes,
+        exportNote,
+        exportProgress,
+        exportStatus,
+        importNotes
       }}
     >
       {children}
     </NotesContext.Provider>
   );
 }
-}
+  
 export function useNotes() {
   return useContext(NotesContext);
 }
